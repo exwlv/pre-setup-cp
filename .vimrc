@@ -1,6 +1,11 @@
-syntax on
+" Automatic installation for vim-plug IFF not currently installed
+" if empty(glob('~/.vim/autoload/plug.vim'))
+"  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+"      \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+"    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+" endif
 
-" ===== lists colorscheme default =====
+" *** colorscheme default ***
 " blue
 " darkblue
 " default
@@ -19,27 +24,47 @@ syntax on
 " torte
 " zellner
 
-set clipboard=unnamed
+" plugins will be downloaded under the specified directory
+call plug#begin('~/.vim/plugged')
+	" declare the list of plugins for vim-plug
+	Plug 'morhetz/gruvbox'
+call plug#end()
 
-colorscheme morning
+" theme gruvbox
+set t_Co=256
+let g:airline_theme='gruvbox'
+let g:gruvbox_contrast_dark = 'soft'
+let g:gruvbox_termcolors = 256
 
-set noerrorbells
-set nobackup
+if exists('+termguicolors')
+  let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+  let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+  set termguicolors
+endif
 
-highlight ColorColumn ctermbg=0 guibg=lightgrey
+colorscheme gruvbox
 
+" highlight ColorColumn ctermbg=0 guibg=lightgrey
+
+" disable vim bells sounds
+set visualbell t_vb=
+if has("autocmd") && has("gui")
+	au GUIEnter * set t_vb=
+endif
+
+" font
 if has("gui_running")
   if has("gui_gtk2")
     set guifont=Inconsolata\ 12
   elseif has("gui_macvim")
     set guifont=Menlo\ Regular:h14
   elseif has("gui_win32")
-    set guifont=Consolas:h11:cANSI
+    set guifont=Source\ Code\ Pro:h11:cANSI
   endif
 endif
 
 " mapping to reload configuration
-nmap <leader>so :source $HOME\_vimrc<CR>
+nmap <leader>so :source $HOME\.vimrc<CR>
 
 source $VIMRUNTIME/vimrc_example.vim
 
@@ -52,13 +77,35 @@ set ts=4
 set sw=4
 set si
 
-cd C:\Users\[username]\project
+" general
+syntax on
+set number
+set nowrap
+set noerrorbells
+set nobackup
+set noswapfile
+set undofile
+
+set showcmd
+" set cursorline
+set showmatch
+set incsearch
+set hlsearch
+set encoding=utf8
+set exrc
+"set mouse=a
+set mouse=n
+set hidden
+
+" path c/c++ project
+cd C:/Users/[username]/[projectname]
 
 inoremap { {}<Left>
 inoremap {<CR> {<CR>}<Esc>O
 inoremap {{ {
 inoremap {} {}
 
+" compile, run
 autocmd filetype cpp nnoremap <F9> :w <bar> !g++ -std=c++14 % -o %:r -Wl,--stack,268435456<CR>
 autocmd filetype cpp nnoremap <F10> :!%:r<CR>
 autocmd filetype cpp nnoremap <C-C> :s/^\(\s*\)/\1\/\/<CR> :s/^\(\s*\)\/\/\/\//\1<CR> $
